@@ -7,7 +7,10 @@ ________
 
 twitterの[finagle](https://github.com/twitter/finagle)の関数型プログラミングのためのラッパー
 
-#build.sbt
+
+
+
+build.sbt
 
 ```scala
 val baseSettings = Seq(
@@ -27,6 +30,7 @@ val baseSettings = Seq(
   
 
 
+
 ## hello world
 
 ```scala
@@ -40,7 +44,7 @@ Http.serve(":8080", api.toService)
 
 EndPointをtoServiceで変換するとfinagleで受け取れるようになる。
 
-## Endpoint
+## Endpointとは
 
 
 
