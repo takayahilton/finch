@@ -8,7 +8,8 @@ ________
 twitterの[finagle](https://github.com/twitter/finagle)の関数型プログラミングのためのラッパー
 
 
-#build.sbt
+
+build.sbt
 
 ```scala
 val baseSettings = Seq(
@@ -28,6 +29,7 @@ val baseSettings = Seq(
   
 
 
+
 ## hello world
 
 ```scala
@@ -45,7 +47,7 @@ Endpointはsprayのdirecitveみたいなものでこれを組み合わせてapi�
 
 
 
-## Endpoint
+## Endpointとは
 
 Endpointは
 ```scala
