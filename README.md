@@ -47,7 +47,7 @@ Endpointはsprayのdirecitveみたいなものでこれを組み合わせてapi�
 
 
 
-## Endpointとは
+## Endpoint
 
 Endpointは
 ```scala
@@ -55,10 +55,12 @@ Request => Option[Future[Output[A]]]
 ```
 の型の関数
 
+
 * Optionはrequestがパスにマッチしているかどうかを表していてNoneなら404
 * Futureは非同期の計算で実行時例外が起きると500が帰る
   * scala.util.Futureではなくtwitter.util.Futureなので注意
 * Aがレスポンスの内容 
+* ビジネスロジックはEndpoint[A]のAを作成することになる。
 
 
 実際に使ってみる
@@ -78,16 +80,16 @@ param("fuge").as[A]とすると age=Aの型だけマッチ
 /fuge/3みたいなパスをマッチさせたい場合は
 string(), boolean(), uuid(), int(), long()などがある。
 ```scala
-get("helo"::string("name")::long("age")) // hello/[String]/Longだけにマッチ
+get("helo"::string("name")::long("age")) // hello/[String]/[Long]だけにマッチ
 ```
-
 
 
 `::`で合成していく
 `::`で合成するとshapelessのHListになる
 a :: b の場合は a にマッチかつ bにマッチするパターン
+scala```
 val user: Endpoint[String::Long::HNil] = string("name")::long("age")
-
+```
 
 
 `:+:`で合成していく
@@ -104,7 +106,7 @@ val api = get :+: put :+: del
 
 
 shapeless使っているので
-case classをサポートしている
+case classをの変換もサポートしている
 
 パラメーターから
 ```scala
@@ -129,9 +131,39 @@ implicit val dateTimeDecoder: DecodeRequest[DateTime] =
 
 
 
+#validation
+val rule = ValidationRule[A](message: String)(f: A => Boolean)
+を定義する
+
+```scala
+val bePositive = ValidationRule[Int]("be postive" )(_ > 0)
+
+  val user = (
+      param("name") ::
+      param("age").as[Int].should(bePositive)
+    ).as[User]
+```
+
+
+合成も簡単にできる
+```scala
+val bePositive = ValidationRule[Int]("be postive" )(_ > 0)
+val under18 = ValidationRule[Int]("be postive" )(_ < 18)
+
+  val user = (
+      param("name") ::
+      param("age").as[Int].should(bePositive).should(under18)
+    ).as[User]
+```
+
+
+すごい
+
+
 
 ##まとめ
 finchの関数がほとんどがEndpoint型を返すのでとにかく合成しやすい
+コードの実装が割とシンプルなのでshaplessほどのわけ分からなさは感じなかった。
 
 
 
