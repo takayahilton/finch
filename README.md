@@ -85,15 +85,18 @@ get("helo"::string("name")::long("age")) // hello/[String]/[Long]だけにマッ
 
 
 `::`で合成していく
+
 `::`で合成するとshapelessのHListになる
 a :: b の場合は a にマッチかつ bにマッチするパターン
-scala```
+```scala
 val user: Endpoint[String::Long::HNil] = string("name")::long("age")
 ```
 
 
 `:+:`で合成していく
+
 `:+:`で合成するとshapelessのCoproduct(直和)になる
+
 a :+: b の場合は a または b にマッチするパターン
 
 
