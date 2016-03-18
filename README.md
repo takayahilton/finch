@@ -159,14 +159,14 @@ val under18 = ValidationRule[Int]("be postive" )(_ < 18)
     ).as[User]
 ```
 
-
 すごい
 
 
 
 ##まとめ
-finchの関数がほとんどがEndpoint型を返すのでとにかく合成しやすい
-コードの実装が割とシンプルなのでshaplessほどのわけ分からなさは感じなかった。
+* finchの関数がほとんどがEndpoint型を返すのでとにかく合成しやすい
+  * Endpointを合成してもEndpoint 
+* コードの実装が割とシンプルなのでshaplessほどのわけ分からなさは感じなかった。
 
 
 
