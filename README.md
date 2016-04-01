@@ -5,7 +5,7 @@ ________
 
 ### finchとは
 
-twitterの[finagle](https://github.com/twitter/finagle)の関数型プログラミングのためのラッパー
+Twitterが開発したOSSのRPCシステム[finagle](https://github.com/twitter/finagle)の関数型ラッパー
 
 
 
@@ -25,8 +25,19 @@ val baseSettings = Seq(
   
   >"org.typelevel" %% "cats-core" % catsVersion,
   
+  
   oh shapeless and cats ...
   
+
+
+finagleでは
+```scala
+abstract class Service[-Req, +Rep] extends (Req => Future[Rep])
+```
+というReq => Future[Rep]型の関数を実装してサーバーに渡す。
+
+
+finchはこのServiceの実装を助けてくれる。
 
 
 
@@ -41,7 +52,8 @@ val api: Endpoint[String] = get("hello") { Ok("Hello, World!") }
 Http.serve(":8080", api.toService)
 ```
 
-EndpointをtoServiceで変換するとfinagleで受け取れる(Service[Request, Response]になる)ようになる。
+
+Endpointという関数をtoServiceで変換するとfinagleで受け取れる(Service[Request, Response]になる)ようになる。
 Endpointはsprayのdirecitveみたいなものでこれを組み合わせてapiを作っていく。
 
 
@@ -109,16 +121,16 @@ val api = get :+: put :+: del
 
 
 shapeless使っているので
-case classをの変換もサポートしている
+case classの変換も
 
-パラメーターから
+クエリパラメーターからUser型に変換
 ```scala
 case class User(name: String, age: Int)
 val api: Endpoint[String] = get("hello" :: Endpoint.derive[User].fromParams) { u: User => Ok(u.toString) }
 ```
 
 
-bodyから
+bodyからUser型に変換
 ```scala
 case class User(name: String, age: Int)
 val api: Endpoint[String] = get("hello" :: body.as[User) { u: User => Ok(u.toString) }
@@ -159,14 +171,17 @@ val under18 = ValidationRule[Int]("be postive" )(_ < 18)
     ).as[User]
 ```
 
-すごい
+
+shouldがEndPointを返すおかげで型エラーに悩まされないで合成できる
+playのformよりずっといい
 
 
 
 ##まとめ
 * finchの関数がほとんどがEndpoint型を返すのでとにかく合成しやすい
-  * Endpointを合成してもEndpoint 
-* コードの実装が割とシンプルなのでshaplessほどのわけ分からなさは感じなかった。
+  * Endpointを合成するとEndpoint
+  * Endpointクラスが持つpublic methodの殆どがEndpoingを返す。
+* コードの実装が割とシンプルなのでsprayより読みやすいと思う。
 
 
 
