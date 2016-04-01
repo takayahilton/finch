@@ -196,7 +196,7 @@ playのformよりずっといい
 * finchの関数がほとんどがEndpoint型を返すのでとにかく合成しやすい
   * Endpointを合成するとEndpoint
   * Endpointクラスが持つpublic methodの殆どがEndpoingを返す。
-* コードの実装が割とシンプルなのでsprayより読みやすいと思う。
+* sprayみたいに書けるがコードの実装がsprayに比べだいぶシンプルなのでより読みやすいと思う。
 
 
 
