@@ -26,7 +26,8 @@ val baseSettings = Seq(
   >"org.typelevel" %% "cats-core" % catsVersion,
   
   
-  oh shapeless and cats ...
+
+oh shapeless and cats ...
   
 
 
@@ -54,7 +55,7 @@ Http.serve(":8080", api.toService)
 
 
 Endpointという関数をtoServiceで変換するとfinagleで受け取れる(Service[Request, Response]になる)ようになる。
-Endpointはsprayのdirecitveみたいなものでこれを組み合わせてapiを作っていく。
+Endpointはを組み合わせてapiを作っていく。
 
 
 
@@ -81,20 +82,30 @@ Request => Option[Future[Output[A]]]
 get("hoge" :: "fuge") // => /hoge/fuge のパスにマッチ
 get("hello"::param("name")) // =>/hello?name=... にマッチ
 get("hello"::paramOption("name")) //=> ?nameがなくてもマッチ 
-get("hello"::params("name")) //=> hello?name=...&name=...にマッチ
+get("hello"::params("name")) //=> hello?name=...&name=...に複数のnameにマッチ
 get("hello"::paramsNonEmpty("name")) //=> /hello　nameが一つもないとエラー
 ```
 
 
-param("fuge").as[A]とすると age=Aの型だけマッチ
+param("fuge").as[A]とすると fuge=Aの型だけマッチし型がマッチしないとエラーになる。
 
 
-/fuge/3みたいなパスをマッチさせたい場合は
+finchがデフォルトではサポートしていない型をデコードしたい場合は
+```scala
+implicit val dateTimeDecoder: DecodeRequest[DateTime] =
+  DecodeRequest.instance(s => Try(new DateTime(s.toLong)))
+```
+という `String => Try[A]`の関数を実装すれば良い。　
+
+
+デフォルトでパスにマッチしてれる型は
 string(), boolean(), uuid(), int(), long()などがある。
 ```scala
 get("helo"::string("name")::long("age")) // hello/[String]/[Long]だけにマッチ
 ```
 
+## EndPointの合成
+あるパスにマッチかつ続けて別のパスにマッチさせたい場合は
 
 `::`で合成していく
 
@@ -105,11 +116,15 @@ val user: Endpoint[String::Long::HNil] = string("name")::long("age")
 ```
 
 
+パスにマッチしなかったら別のパスにマッチさせたい場合は
 `:+:`で合成していく
 
 `:+:`で合成するとshapelessのCoproduct(直和)になる
 
 a :+: b の場合は a または b にマッチするパターン
+
+
+例えばCRUDアプリを作る時などは
 
 
 ```scala
@@ -118,6 +133,8 @@ val put = put("user"::long){p: Long => Ok(...)}
 val del = delete("user"::long){p: Long => Ok(...)}
 val api = get :+: put :+: del
 ```
+
+こういう風に組み合わせる
 
 
 shapeless使っているので
@@ -136,13 +153,6 @@ case class User(name: String, age: Int)
 val api: Endpoint[String] = get("hello" :: body.as[User) { u: User => Ok(u.toString) }
 ```
 
-
-finchがサポートしていない型をデコードしたい場合は
-```scala
-implicit val dateTimeDecoder: DecodeRequest[DateTime] =
-  DecodeRequest.instance(s => Try(new DateTime(s.toLong)))
-```
-という `String => Try[A]`の関数を実装すれば良い。　
 
 
 
