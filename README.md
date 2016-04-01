@@ -146,7 +146,9 @@ case classの変換も
 クエリパラメーターからUser型に変換
 ```scala
 case class User(name: String, age: Int)
-val api: Endpoint[String] = get("hello" :: Endpoint.derive[User].fromParams) { u: User => Ok(u.toString) }
+val api: Endpoint[String] = get("hello" :: Endpoint.derive[User].fromParams) { u: User => 
+  Ok(u.toString) 
+}
 ```
 
 
