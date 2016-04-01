@@ -27,6 +27,7 @@ val baseSettings = Seq(
   
   
 
+
 oh shapeless and cats ...
   
 
@@ -104,10 +105,13 @@ string(), boolean(), uuid(), int(), long()などがある。
 get("helo"::string("name")::long("age")) // hello/[String]/[Long]だけにマッチ
 ```
 
+
+
 ## EndPointの合成
 あるパスにマッチかつ続けて別のパスにマッチさせたい場合は
 
 `::`で合成していく
+
 
 `::`で合成するとshapelessのHListになる
 a :: b の場合は a にマッチかつ bにマッチするパターン
@@ -116,16 +120,15 @@ val user: Endpoint[String::Long::HNil] = string("name")::long("age")
 ```
 
 
-パスにマッチしなかったら別のパスにマッチさせたい場合は
+あるパスにマッチしなかったら別のパスにマッチさせたい場合は
 `:+:`で合成していく
+
 
 `:+:`で合成するとshapelessのCoproduct(直和)になる
 
-a :+: b の場合は a または b にマッチするパターン
 
 
 例えばCRUDアプリを作る時などは
-
 
 ```scala
 val get = get("user"::long){p: Long => Ok(...)}
