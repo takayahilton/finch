@@ -108,6 +108,8 @@ get("helo"::string("name")::long("age")) // hello/[String]/[Long]だけにマッ
 
 
 ## EndPointの合成
+
+
 あるパスにマッチかつ続けて別のパスにマッチさせたい場合は
 
 `::`で合成していく
