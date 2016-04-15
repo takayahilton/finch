@@ -56,7 +56,7 @@ Http.serve(":8080", api.toService)
 
 
 Endpointという関数をtoServiceで変換するとfinagleで受け取れる(Service[Request, Response]になる)ようになる。
-Endpointはを組み合わせてapiを作っていく。
+Endpointを組み合わせてapiを作っていく。
 
 
 
